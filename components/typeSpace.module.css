@@ -1,0 +1,11 @@
+.Character {
+    white-space: pre;
+  }
+  
+  .CharacterCurrent {
+    background-color: #09d3ac;
+  }
+  
+  .CharacterOut {
+    color: silver;
+  }
