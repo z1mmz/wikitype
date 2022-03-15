@@ -16,7 +16,14 @@ export default function TypeSpace({data}) {
     const [outgoingChars, setOutgoingChars] = useState('');
     const [currentChar, setCurrentChar] = useState('');
     const [incomingChars, setIncomingChars] = useState('Loading wiki text.....');
-
+    const fetchMore = () =>{
+        fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
+          .then((res) => res.json())
+          .then((data) => {
+            setIncomingChars(incomingChars+ " " + data.extract)
+            console.log(data.extract)
+          })
+    }
     useEffect(() => {
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
@@ -48,9 +55,9 @@ export default function TypeSpace({data}) {
           
           //6
           updatedIncomingChars = incomingChars.substring(1);
-        //   if (updatedIncomingChars.split(' ').length < 10) {
-        //     updatedIncomingChars +=' ' + useEffect();
-        //   }
+          if (updatedIncomingChars.split(' ').length < 10) {
+            updatedIncomingChars +=' ' + fetchMore();
+          }
           setIncomingChars(updatedIncomingChars);
         }
       });
