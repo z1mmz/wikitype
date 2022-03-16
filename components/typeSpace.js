@@ -42,35 +42,35 @@ export default function TypeSpace({data}) {
       }, [])
       
       useKeyPress(key => {
-        //1
+        // Create variables and init WPM
         let updatedOutgoingChars = outgoingChars;
         let updatedIncomingChars = incomingChars;
         if (!startTime) {
           setStartTime(currentTime());
         }
-        //2
+        // if the Key is correct
         if (key === currentChar) {
-          if (key === currentChar) {
-            if (incomingChars.charAt(0) === ' ') {
-              setWordCount(wordCount + 1);
-              const durationInMinutes = (currentTime() - startTime) / 60000.0;
-              setWpm(((wordCount + 1) / durationInMinutes).toFixed(2));
-            }
+          // update WPM at end of word
+          if (incomingChars.charAt(0) === ' ') {
+            setWordCount(wordCount + 1);
+            const durationInMinutes = (currentTime() - startTime) / 60000.0;
+            setWpm(((wordCount + 1) / durationInMinutes).toFixed(2));
           }
-          //3
+          //remove initial padding untill filled with words
           if (leftPadding.length > 0) {
             setLeftPadding(leftPadding.substring(1));
           }
-          //4
+          //Update the list of correct chars
           updatedOutgoingChars += currentChar;
           setOutgoingChars(updatedOutgoingChars);
           
-          //5      
+          //move cursor to next char
           setCurrentChar(incomingChars.charAt(0));
           
-          //6
+          //update new income chars
           updatedIncomingChars = incomingChars.substring(1);
 
+          //If close to finishing current data fetch new data and appends to incoming
           if(nextWikitext != '' & loading == true){
             updatedIncomingChars +=' '+nextWikitext
             setNextWikitest('')
@@ -80,7 +80,6 @@ export default function TypeSpace({data}) {
             fetchMore()
           } 
           setIncomingChars(updatedIncomingChars);
-        
         }
       });
     
