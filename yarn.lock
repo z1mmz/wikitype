@@ -1518,6 +1518,11 @@
     "has-symbols" "^1.0.2"
     "which-boxed-primitive" "^1.0.2"
 
+"unidecode@^0.1.8":
+  "integrity" "sha1-77swFTi8RSRqmsjFWdcvAVMFBT4="
+  "resolved" "https://registry.npmjs.org/unidecode/-/unidecode-0.1.8.tgz"
+  "version" "0.1.8"
+
 "uri-js@^4.2.2":
   "integrity" "sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg=="
   "resolved" "https://registry.npmjs.org/uri-js/-/uri-js-4.4.1.tgz"

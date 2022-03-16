@@ -2,9 +2,11 @@
 import React, { useEffect,useState } from 'react';
 import useKeyPress from '../hooks/useKeyPress';
 import typeStyles from './typeSpace.module.css'
+import unidecode from 'unidecode';
 
-
-
+function slugify(text) {
+  return unidecode(text)
+}
 
 
 export default function TypeSpace({data}) {
@@ -30,10 +32,11 @@ export default function TypeSpace({data}) {
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
           .then((data) => {
-            console.log(data.extract)
-            setWikitext(data.extract)
-            setCurrentChar(data.extract.charAt(0))
-            setIncomingChars(data.extract.substr(1))
+            let cleanText = slugify(data.extract)
+            console.log(cleanText)
+            setWikitext(cleanText)
+            setCurrentChar(cleanText.charAt(0))
+            setIncomingChars(cleanText.substr(1))
           })
       }, [])
       
