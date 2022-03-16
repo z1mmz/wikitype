@@ -12,7 +12,7 @@ export default function TypeSpace(props) {
       );
     const [wikiData,setWikiData] = useState()
     const [nextwikiData,setNextwikiData] = useState()
-    const [nextWikitext,setNextWikitest] = useState('')
+    const [nextWikitext,setNextWikitext] = useState('')
     const [remainingWords, setRemainingWords] = useState(0)
     const [wpm,setWpm] = useState(0)
     const [startTime, setStartTime] = useState()
@@ -26,9 +26,11 @@ export default function TypeSpace(props) {
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
           .then((data) => {
+            let cleanText = slugify(data.extract)
             setNextwikiData(data)
-            setNextWikitest(data.extract)
-                            console.log(data.extract)})
+            setNextWikitext(cleanText)
+            console.log(cleanText)
+            return cleanText})
           
     }
     useEffect(() => {
@@ -65,7 +67,8 @@ export default function TypeSpace(props) {
               setRemainingWords(remainingWords-1)
               if(remainingWords-1 == 0){
                 setWikiData(nextwikiData)
-                setRemainingWords(incomingChars.split(' ').length)
+                setRemainingWords(nextWikitext.split(' ').length)
+                setNextWikitext('')
               }
             }
           }
@@ -86,7 +89,6 @@ export default function TypeSpace(props) {
           //If close to finishing current data fetch new data and appends to incoming
           if(nextWikitext != '' & loading == true){
             updatedIncomingChars +=' '+nextWikitext
-            setNextWikitest('')
             setLoading(false)
           }else if (nextWikitext == '' & updatedIncomingChars.split(' ').length < 10 & loading != true) {
             setLoading(true)
