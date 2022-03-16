@@ -9,3 +9,9 @@
   .CharacterOut {
     color: silver;
   }
+
+  .info {
+    white-space: pre;
+    color: rgb(156, 156, 156);
+  }
+  

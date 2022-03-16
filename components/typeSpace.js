@@ -1,12 +1,11 @@
 
 import React, { useEffect,useState } from 'react';
 import useKeyPress from '../hooks/useKeyPress';
+import { slugify } from '../utils/textCean';
 import typeStyles from './typeSpace.module.css'
-import unidecode from 'unidecode';
+import { currentTime } from '../utils/time';
 
-function slugify(text) {
-  return unidecode(text)
-}
+
 
 
 export default function TypeSpace({data}) {
@@ -16,6 +15,9 @@ export default function TypeSpace({data}) {
       );
     const [wikitext,setWikitext] = useState(data)
     const [nextWikitext,setNextWikitest] = useState('')
+    const [wpm,setWpm] = useState(0)
+    const [startTime, setStartTime] = useState()
+    const [wordCount, setWordCount] = useState(0)
     const [loading,setLoading] = useState(false)
     const [outgoingChars, setOutgoingChars] = useState('');
     const [currentChar, setCurrentChar] = useState('');
@@ -27,7 +29,6 @@ export default function TypeSpace({data}) {
                             console.log(data.extract)})
           
     }
-    
     useEffect(() => {
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
@@ -44,9 +45,18 @@ export default function TypeSpace({data}) {
         //1
         let updatedOutgoingChars = outgoingChars;
         let updatedIncomingChars = incomingChars;
-        
+        if (!startTime) {
+          setStartTime(currentTime());
+        }
         //2
         if (key === currentChar) {
+          if (key === currentChar) {
+            if (incomingChars.charAt(0) === ' ') {
+              setWordCount(wordCount + 1);
+              const durationInMinutes = (currentTime() - startTime) / 60000.0;
+              setWpm(((wordCount + 1) / durationInMinutes).toFixed(2));
+            }
+          }
           //3
           if (leftPadding.length > 0) {
             setLeftPadding(leftPadding.substring(1));
@@ -75,12 +85,14 @@ export default function TypeSpace({data}) {
       });
     
     return(
-    <p className={typeStyles.Character}>
-        <span className={typeStyles.CharacterOut}>
-        {(leftPadding + outgoingChars).slice(-20)}
-        </span>
-        <span className={typeStyles.CharacterCurrent}>{currentChar}</span>
-        <span>{incomingChars.substr(0, 20)}</span>
-    </p>
+      <div><span className={typeStyles.info}>WPM:{wpm}</span>
+      <p className={typeStyles.Character}>
+          <span className={typeStyles.CharacterOut}>
+          {(leftPadding + outgoingChars).slice(-20)}
+          </span>
+          <span className={typeStyles.CharacterCurrent}>{currentChar}</span>
+          <span>{incomingChars.substr(0, 20)}</span>
+      </p>
+    </div>
     )
     }
