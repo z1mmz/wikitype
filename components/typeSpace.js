@@ -1,4 +1,3 @@
-
 import React, { useEffect,useState } from 'react';
 import useKeyPress from '../hooks/useKeyPress';
 import { slugify } from '../utils/textCean';
@@ -6,15 +5,15 @@ import typeStyles from './typeSpace.module.css'
 import { currentTime } from '../utils/time';
 
 
-
-
-export default function TypeSpace({data}) {
+export default function TypeSpace(props) {
 
     const [leftPadding, setLeftPadding] = useState(
         new Array(20).fill(' ').join(''),
       );
-    const [wikitext,setWikitext] = useState(data)
+    const [wikiData,setWikiData] = useState()
+    const [nextwikiData,setNextwikiData] = useState()
     const [nextWikitext,setNextWikitest] = useState('')
+    const [remainingWords, setRemainingWords] = useState(0)
     const [wpm,setWpm] = useState(0)
     const [startTime, setStartTime] = useState()
     const [wordCount, setWordCount] = useState(0)
@@ -22,10 +21,13 @@ export default function TypeSpace({data}) {
     const [outgoingChars, setOutgoingChars] = useState('');
     const [currentChar, setCurrentChar] = useState('');
     const [incomingChars, setIncomingChars] = useState('Loading wiki text.....');
+
     const fetchMore =  () =>{
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
-          .then((data) => {setNextWikitest(data.extract)
+          .then((data) => {
+            setNextwikiData(data)
+            setNextWikitest(data.extract)
                             console.log(data.extract)})
           
     }
@@ -34,10 +36,10 @@ export default function TypeSpace({data}) {
           .then((res) => res.json())
           .then((data) => {
             let cleanText = slugify(data.extract)
-            console.log(cleanText)
-            setWikitext(cleanText)
+            setWikiData(data)
             setCurrentChar(cleanText.charAt(0))
             setIncomingChars(cleanText.substr(1))
+            setRemainingWords(cleanText.split(' ').length)
           })
       }, [])
       
@@ -53,8 +55,19 @@ export default function TypeSpace({data}) {
           // update WPM at end of word
           if (incomingChars.charAt(0) === ' ') {
             setWordCount(wordCount + 1);
+            console.log(remainingWords)
+            
             const durationInMinutes = (currentTime() - startTime) / 60000.0;
-            setWpm(((wordCount + 1) / durationInMinutes).toFixed(2));
+            let currentWpm = ((wordCount + 1) / durationInMinutes).toFixed(2)
+            setWpm(currentWpm);
+            props.setWpm(currentWpm)
+            if(remainingWords != 0){
+              setRemainingWords(remainingWords-1)
+              if(remainingWords-1 == 0){
+                setWikiData(nextwikiData)
+                setRemainingWords(incomingChars.split(' ').length)
+              }
+            }
           }
           //remove initial padding untill filled with words
           if (leftPadding.length > 0) {
@@ -84,7 +97,11 @@ export default function TypeSpace({data}) {
       });
     
     return(
-      <div><span className={typeStyles.info}>WPM:{wpm}</span>
+      <div>
+        <span className={typeStyles.info}>WPM:{wpm}</span>{" "}
+        <a href={wikiData ? wikiData.content_urls.desktop.page :""} 
+          rel="noreferrer noopener" 
+          target="_blank" className={typeStyles.link}>{wikiData ? wikiData.title :"" }</a>
       <p className={typeStyles.Character}>
           <span className={typeStyles.CharacterOut}>
           {(leftPadding + outgoingChars).slice(-20)}

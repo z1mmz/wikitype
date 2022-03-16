@@ -10,7 +10,7 @@ import { useState } from 'react';
 
 export default function Home() {
 
-  const [wikitext, setWikitext] = useState("wikitext")
+  const [wpm, setWpm] = useState('')
 
   
 
@@ -18,14 +18,14 @@ export default function Home() {
     <Layout>
     <div className={styles.container}>
       <Head>
-        <title>WIKITYPE</title>
+        <title>WIKITYPE {wpm}</title>
         <meta name="description" content="Wikipedia typing game, learn while you learn" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
         <div>
-           <TypeSpace/>
+           <TypeSpace setWpm={setWpm}/>
         </div>
 
       </main>
