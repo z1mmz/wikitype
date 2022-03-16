@@ -13,17 +13,19 @@ export default function TypeSpace({data}) {
         new Array(20).fill(' ').join(''),
       );
     const [wikitext,setWikitext] = useState(data)
+    const [nextWikitext,setNextWikitest] = useState('')
+    const [loading,setLoading] = useState(false)
     const [outgoingChars, setOutgoingChars] = useState('');
     const [currentChar, setCurrentChar] = useState('');
     const [incomingChars, setIncomingChars] = useState('Loading wiki text.....');
-    const fetchMore = () =>{
+    const fetchMore =  () =>{
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
-          .then((data) => {
-            setIncomingChars(incomingChars+ " " + data.extract)
-            console.log(data.extract)
-          })
+          .then((data) => {setNextWikitest(data.extract)
+                            console.log(data.extract)})
+          
     }
+    
     useEffect(() => {
         fetch('https://en.wikipedia.org/api/rest_v1/page/random/summary')
           .then((res) => res.json())
@@ -55,10 +57,17 @@ export default function TypeSpace({data}) {
           
           //6
           updatedIncomingChars = incomingChars.substring(1);
-          if (updatedIncomingChars.split(' ').length < 10) {
-            updatedIncomingChars +=' ' + fetchMore();
-          }
+
+          if(nextWikitext != '' & loading == true){
+            updatedIncomingChars +=' '+nextWikitext
+            setNextWikitest('')
+            setLoading(false)
+          }else if (nextWikitext == '' & updatedIncomingChars.split(' ').length < 10 & loading != true) {
+            setLoading(true)
+            fetchMore()
+          } 
           setIncomingChars(updatedIncomingChars);
+        
         }
       });
     
